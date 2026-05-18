@@ -1,0 +1,8 @@
+import type { IncomingMessage } from "node:http";
+import { ServerResponse } from "node:http";
+export default class ApiServiceRouting {
+    constructor();
+    static route(req: IncomingMessage, res: ServerResponse): Promise<void>;
+    private static getEntityController;
+}
+//# sourceMappingURL=api-server-routing.d.ts.map

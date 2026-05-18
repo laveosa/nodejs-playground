@@ -6,7 +6,7 @@ import { noiseKeys } from "#src/const/enums/api-request-noise-keys.js";
 
 export function getEntityChunk(
   path: string,
-  envChunk: string = "api",
+  envChunk: "api" | "db",
 ): EntityType {
   if (!path || path.length === 0) return null;
 

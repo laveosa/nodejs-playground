@@ -3,8 +3,6 @@ import { ServerResponse } from "node:http";
 export default class ApiService {
     constructor();
     static mapEntityControllers(req: IncomingMessage, res: ServerResponse): Promise<void>;
-    static getBody<T = unknown>(req: IncomingMessage): Promise<T>;
-    static responseErrorHandler(error: unknown, res: ServerResponse, code?: number): void;
     private static getEntityController;
 }
 //# sourceMappingURL=api-service.d.ts.map

@@ -3,7 +3,8 @@
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
-    // "outDir": "./dist",
+    "outDir": "./dist",
+    "noEmit": false,
 
     "module": "NodeNext",
     "moduleResolution": "NodeNext",

@@ -8,23 +8,22 @@ import UserController from "#src/controllers/api-server/user-controller.js";
 import ProductController from "#src/controllers/api-server/product-controller.js";
 import AddressController from "#src/controllers/api-server/address-controller.js";
 import BundleController from "#src/controllers/api-server/bundle-controller.js";
-import { responseErrorHandler } from "#src/utils/helpers/api-helper.js";
 
-export default class ApiService {
+export default class DbService {
   constructor() {}
 
   static async mapEntityControllers(req: IncomingMessage, res: ServerResponse) {
-    const entity: EntityType = getEntityChunk(req.url, "api");
+    const entity: EntityType = getEntityChunk(req.url, "db");
 
     try {
       const controller = this.getEntityController(entity);
       await controller.requestHandler(req, res);
     } catch (error: unknown) {
-      responseErrorHandler(error, res);
+      this.responseErrorHandler(error, res);
     }
   }
 
-  /*static getBody<T = unknown>(req: IncomingMessage): Promise<T> {
+  static getBody<T = unknown>(req: IncomingMessage): Promise<T> {
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
 
@@ -45,9 +44,9 @@ export default class ApiService {
 
       req.on("error", (error) => reject(error));
     });
-  }*/
+  }
 
-  /*static responseErrorHandler(
+  static responseErrorHandler(
     error: unknown,
     res: ServerResponse,
     code: number = 500,
@@ -61,7 +60,7 @@ export default class ApiService {
       res.writeHead(code, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: errorMessage }));
     }
-  }*/
+  }
 
   // ========================================================================= PRIVATE
 
