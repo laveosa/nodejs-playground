@@ -1,0 +1,1 @@
+{"version":3,"file":"IRequestContext.d.ts","sourceRoot":"","sources":["IRequestContext.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,WAAW,CAAC;AAEjD,MAAM,WAAW,eAAe;IAC9B,GAAG,EAAE,eAAe,CAAC;IACrB,QAAQ,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,CAAC;IACjC,IAAI,EAAE,GAAG,CAAC;CACX"}

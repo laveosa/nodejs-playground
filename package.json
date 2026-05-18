@@ -1,0 +1,32 @@
+{
+  "name": "webdev_tutorial",
+  "version": "1.0.0",
+  "description": "test application for node js experiments",
+  "license": "ISC",
+  "author": "Nik",
+  "type": "module",
+  "main": "app.ts",
+  "imports": {
+    "#src/*": "./src/*",
+    "#db/*": "./db/*",
+    "#frontend/*": "./frontend/*"
+  },
+  "scripts": {
+    "sass:watch": "sass --watch frontend/views/pages:frontend/views/pages",
+    "ts:watch": "tsc --watch --project tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch app.ts",
+    "start": "tsc app.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "prettier": "^3.8.3",
+    "sass": "^1.99.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "zod": "^4.4.3"
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"bundle-api-service.d.ts","sourceRoot":"","sources":["bundle-api-service.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,mCAAmC,CAAC;AAErE,MAAM,CAAC,OAAO,OAAO,gBAAgB;;IAG7B,SAAS,CAAC,EAAE,EAAE,MAAM;IAEpB,aAAa;IAEb,YAAY,CAAC,IAAI,EAAE,WAAW;IAE9B,YAAY,CAAC,IAAI,EAAE,WAAW;IAE9B,YAAY,CAAC,EAAE,EAAE,MAAM;IAEvB,gBAAgB;CACvB"}

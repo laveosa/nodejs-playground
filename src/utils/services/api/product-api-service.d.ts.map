@@ -1,0 +1,1 @@
+{"version":3,"file":"product-api-service.d.ts","sourceRoot":"","sources":["product-api-service.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,oCAAoC,CAAC;AAEvE,MAAM,CAAC,OAAO,OAAO,iBAAiB;;IAG9B,UAAU,CAAC,EAAE,EAAE,MAAM;IAErB,cAAc;IAEd,aAAa,CAAC,IAAI,EAAE,YAAY;IAEhC,aAAa,CAAC,IAAI,EAAE,YAAY;IAEhC,aAAa,CAAC,EAAE,EAAE,MAAM;IAExB,iBAAiB;CACxB"}
