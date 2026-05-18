@@ -1,15 +1,19 @@
 import fsP from "node:fs/promises";
-
-import type { UserModel } from "#src/const/models/user-model.js";
 import path from "node:path";
-import { ENV_CONFIG } from "#src/config/env-config.js";
+
+import FsService from "#src/utils/services/fs-service.js";
+import { schemeValidation } from "#src/utils/validation/scheme-validation.js";
+import { UserScheme } from "#src/const/schemes/user-scheme.js";
+import type { UserModel } from "#src/const/models/user-model.js";
+import { removeModelDuplicate } from "#src/utils/helpers/quick-helper.js";
+
+const DB_ROOT_PATH = "./db/jsons";
+const USERS_JSON_PATH = path.join(DB_ROOT_PATH, "users/data.json");
 
 export default class UserDbServer {
   constructor() {}
 
   async getUser(id: string) {
-    console.log("DB user server");
-
     if (!id || id.length === 0) return null;
 
     try {
@@ -20,11 +24,9 @@ export default class UserDbServer {
         email: "leviosa@yahoo.com",
       };
 
-      /*const file = fsP.open(
-        path.join(ENV_CONFIG.DB_PATH, "users/data.json"),
-        "r",
-      );
-      console.log("FILE: ", file);*/
+      const file = await fsP.open(USERS_JSON_PATH, "r");
+
+      console.log("FILE: ", file);
 
       return response;
     } catch (fetchError) {
@@ -52,27 +54,37 @@ export default class UserDbServer {
   }
 
   async createUser(data: UserModel) {
-    /*try {
-      const validData: UserModel = schemeValidation<UserModel>(
-        UserScheme,
-        data,
-      );
+    try {
+      schemeValidation<UserModel>(UserScheme, data);
 
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
+      const newUser: UserModel = structuredClone<UserModel>(data);
+      let rawData: string;
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.POST,
-        body: JSON.stringify(data),
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+      try {
+        rawData = (await FsService.readFile(USERS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
       }
 
-      return (await response.json()) as UserModel;
+      const users: UserModel[] = rawData ? JSON.parse(rawData) : [];
+      users.push(newUser);
+      const cleanUsers = removeModelDuplicate<UserModel>(users, ["id"]);
+      cleanUsers.forEach((user, index) => {
+        user.id = (index + 1).toString(); // Makes IDs nice, clean, and 1-indexed (e.g., "1", "2")
+      });
+
+      await FsService.writeFile<UserModel>(
+        USERS_JSON_PATH,
+        JSON.stringify(cleanUsers, null, 2),
+      );
+      return data;
     } catch (fetchError) {
       throw fetchError;
-    }*/
+    }
   }
 
   async updateUser(id: string, data: UserModel) {

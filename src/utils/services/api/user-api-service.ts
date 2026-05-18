@@ -56,10 +56,7 @@ export default class UserApiService {
 
   async createUser(data: UserModel) {
     try {
-      const validData: UserModel = schemeValidation<UserModel>(
-        UserScheme,
-        data,
-      );
+      schemeValidation<UserModel>(UserScheme, data);
 
       const targetUrl = new URL("user", DB_SERVER_ROOT);
 
