@@ -24,7 +24,7 @@ export function removeModelDuplicate<T extends Record<string, any>>(
 }
 
 export function reassignIDs<T extends { id: string }>(collection: T[]): T[] {
-  if (!collection || collection.length === 0) return null;
+  if (!collection || collection.length === 0) return [];
 
   return collection.map((user, index) => {
     user.id = (index + 1).toString();
