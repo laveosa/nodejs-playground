@@ -9,9 +9,12 @@ import ProductController from "#src/controllers/api-server/product-controller.js
 import AddressController from "#src/controllers/api-server/address-controller.js";
 import BundleController from "#src/controllers/api-server/bundle-controller.js";
 import { responseErrorHandler } from "#src/utils/helpers/api-helper.js";
+import LogApiService from "#src/utils/services/logs/log-api-service.js";
 
 export default class ApiService {
-  constructor() {}
+  constructor() {
+    LogApiService.connect();
+  }
 
   static async mapEntityControllers(req: IncomingMessage, res: ServerResponse) {
     const entity: EntityType = getEntityChunk(req.url, "api");
@@ -23,45 +26,6 @@ export default class ApiService {
       responseErrorHandler(error, res);
     }
   }
-
-  /*static getBody<T = unknown>(req: IncomingMessage): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
-
-      req.on("data", (chunk: Buffer) => chunks.push(chunk));
-
-      req.on("end", () => {
-        try {
-          const rawBody = Buffer.concat(chunks).toString("utf-8");
-
-          if (!rawBody) return resolve(null as T);
-
-          const parsedData = JSON.parse(rawBody) as T;
-          resolve(parsedData);
-        } catch {
-          reject(new Error("Invalid JSON body"));
-        }
-      });
-
-      req.on("error", (error) => reject(error));
-    });
-  }*/
-
-  /*static responseErrorHandler(
-    error: unknown,
-    res: ServerResponse,
-    code: number = 500,
-  ) {
-    let errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred.";
-
-    console.error(`Server Error: `, errorMessage);
-
-    if (!res.writableEnded) {
-      res.writeHead(code, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: errorMessage }));
-    }
-  }*/
 
   // ========================================================================= PRIVATE
 

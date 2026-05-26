@@ -2,6 +2,7 @@ import type { UserModel } from "#src/const/models/user-model.js";
 import { ApiRequestType } from "#src/const/enums/api-request-type.js";
 import { schemeValidation } from "#src/utils/validation/scheme-validation.js";
 import { UserScheme } from "#src/const/schemes/user-scheme.js";
+import LogApiService from "#src/utils/services/logs/log-api-service.js";
 
 const DB_SERVER_ROOT = "http://localhost:8000/db/";
 
@@ -56,10 +57,23 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog(
+        "ERROR",
+        "UserApiService",
+        `Failed to create user schema entries.`,
+      );
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
-    return (await response.json()) as UserModel;
+    const completeUser = await response.json();
+
+    LogApiService.sendLog(
+      "INFO",
+      "UserApiService",
+      `Successfully created dynamic profile entry for User ID: "${completeUser.id}"`,
+    );
+
+    return completeUser as UserModel;
   }
 
   async updateUser(data: UserModel) {

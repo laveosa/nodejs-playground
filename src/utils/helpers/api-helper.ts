@@ -92,3 +92,31 @@ export function parseRawWsFrame(buffer: Buffer): string | null {
 
   return unmasked.toString("utf8");
 }
+
+export function constructRawWsFrame(textPayload: string): Buffer {
+  const payloadBuffer = Buffer.from(textPayload, "utf8");
+  const length = payloadBuffer.length;
+
+  let frameBuffer: Buffer;
+  let dataOffset: number;
+
+  if (length < 126) {
+    frameBuffer = Buffer.alloc(2 + length);
+    frameBuffer[1] = length;
+    dataOffset = 2;
+  } else if (length <= 65535) {
+    frameBuffer = Buffer.alloc(4 + length);
+    frameBuffer[1] = 126;
+    frameBuffer.writeUInt16BE(length, 2);
+    dataOffset = 4;
+  } else {
+    throw new Error(
+      "Payload size limit exceeded for internal native frames setup.",
+    );
+  }
+
+  frameBuffer[0] = 0x81;
+  payloadBuffer.copy(frameBuffer, dataOffset);
+
+  return frameBuffer;
+}
