@@ -8,133 +8,108 @@ const DB_SERVER_ROOT = "http://localhost:8000/db/";
 export default class UserApiService {
   constructor() {}
 
-  // ------- each method necessary logic
-  // parameters validation (implement Zod as a validation tool)
-  // db request logs
-  // db interaction
-  // db response logs
-
   async getUser(id: string) {
     if (!id || id.length === 0) return null;
 
-    try {
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
-      targetUrl.searchParams.set("id", id);
+    const targetUrl = new URL("user", DB_SERVER_ROOT);
+    targetUrl.searchParams.set("id", id);
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.GET,
-      });
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.GET,
+    });
 
-      if (!response.ok) {
-        throw new Error(`DB Server responded with stats: ${response.status}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(`User with id "${id}" does not exist in the database.`);
       }
 
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      console.error("[API Server Internal Fetch Error]: ", fetchError);
-      throw fetchError;
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel;
   }
 
   async getAllUsers() {
-    try {
-      const targetUrl = new URL("user/all", DB_SERVER_ROOT);
+    const targetUrl = new URL("user/all", DB_SERVER_ROOT);
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.GET,
-      });
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.GET,
+    });
 
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
-      }
-
-      return (await response.json()) as UserModel[];
-    } catch (fetchError) {
-      throw fetchError;
+    if (!response.ok) {
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel[];
   }
 
   async createUser(data: UserModel) {
     if (!data || typeof data !== "object") return null;
 
     data.id = "stub";
-    try {
-      schemeValidation<UserModel>(UserScheme, data);
+    schemeValidation<UserModel>(UserScheme, data);
 
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
+    const targetUrl = new URL("user", DB_SERVER_ROOT);
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.POST,
+      body: JSON.stringify(data),
+    });
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.POST,
-        body: JSON.stringify(data),
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
-      }
-
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
+    if (!response.ok) {
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel;
   }
 
   async updateUser(data: UserModel) {
-    try {
-      schemeValidation<UserModel>(UserScheme, data);
+    schemeValidation<UserModel>(UserScheme, data);
 
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
+    const targetUrl = new URL("user", DB_SERVER_ROOT);
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.PUT,
+      body: JSON.stringify(data),
+    });
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.PUT,
-        body: JSON.stringify(data),
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
-      }
-
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
+    if (!response.ok) {
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel;
   }
 
   async deleteUser(id: string) {
     if (!id || id.length === 0) return null;
 
-    try {
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
-      targetUrl.searchParams.set("id", id);
+    const targetUrl = new URL("user", DB_SERVER_ROOT);
+    targetUrl.searchParams.set("id", id);
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.DELETE,
-      });
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.DELETE,
+    });
 
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(`User with id "${id}" does not exist in the database.`);
       }
 
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel;
   }
 
   async deleteAllUsers() {
-    try {
-      const targetUrl = new URL("user/all", DB_SERVER_ROOT);
+    const targetUrl = new URL("user/all", DB_SERVER_ROOT);
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.DELETE,
-      });
+    const response = await fetch(targetUrl.href, {
+      method: ApiRequestType.DELETE,
+    });
 
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
-      }
-
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
+    if (!response.ok) {
+      throw new Error(`DB Server responded with status: ${response.status}`);
     }
+
+    return (await response.json()) as UserModel;
   }
 }
