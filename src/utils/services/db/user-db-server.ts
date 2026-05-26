@@ -34,7 +34,6 @@ export default class UserDbServer {
     const users: UserModel[] = rawData ? JSON.parse(rawData) : [];
     response = users.find((user) => user.id === id);
 
-    // TODO fix this error message, it's not the one which we receive in Postman
     if (!response) throw new Error(`User with id: "${id}" not found`);
 
     return response;
