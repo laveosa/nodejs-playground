@@ -49,3 +49,46 @@ export function getErrorMessage(error: unknown, noDefaultMessage?: boolean) {
     return !noDefaultMessage ? "no error message!" : null;
   }
 }
+
+export function parseRawWsFrame(buffer: Buffer): string | null {
+  const firstByte = buffer[0];
+  const opcode = firstByte & 0x0f;
+
+  if (opcode === 0x08) return null; // Connection close opcode
+
+  const secondByte = buffer[1];
+  const isMasked = (secondByte & 0x80) === 0x80;
+  let payloadLength = secondByte & 0x7f;
+  let dataStartOffset = 2;
+
+  if (payloadLength === 126) {
+    payloadLength = buffer.readUInt16BE(2);
+    dataStartOffset = 4;
+  } else if (payloadLength === 127) {
+    // Highly unlikely for simple log models to hit 64-bit lengths
+    return null;
+  }
+
+  if (!isMasked) {
+    return buffer.toString(
+      "utf8",
+      dataStartOffset,
+      dataStartOffset + payloadLength,
+    );
+  }
+
+  const maskingKey = buffer.subarray(dataStartOffset, dataStartOffset + 4);
+  dataStartOffset += 4;
+
+  const payload = buffer.subarray(
+    dataStartOffset,
+    dataStartOffset + payloadLength,
+  );
+  const unmasked = Buffer.alloc(payloadLength);
+
+  for (let i = 0; i < payloadLength; i++) {
+    unmasked[i] = payload[i] ^ maskingKey[i % 4];
+  }
+
+  return unmasked.toString("utf8");
+}
