@@ -1,5 +1,6 @@
 import fsP from "node:fs/promises";
 import { constants } from "node:fs";
+import { getErrorMessage } from "#src/utils/helpers/api-helper.js";
 
 export default class FsService {
   constructor() {}
@@ -8,57 +9,59 @@ export default class FsService {
     if (!targetPath || targetPath.length === 0) return null;
 
     try {
-      await fsP.mkdir(targetPath, { recursive: true });
-      console.log(`Folder operation complete for: "${targetPath}"`);
+      return await fsP.mkdir(targetPath, { recursive: true });
     } catch (error) {
-      console.error(`Error creating folder: ${error.message}`);
-      throw error;
+      const errorMsg = getErrorMessage(error);
+      console.log(`Error create a folder path: "${targetPath}" : ${errorMsg}`);
+      throw errorMsg;
     }
   }
 
-  static async readFile(targetPath: string): Promise<void> {
+  static async readFile(targetPath: string): Promise<string> {
     if (!targetPath || targetPath.length === 0) return null;
 
     try {
       return await fsP.readFile(targetPath, "utf8");
     } catch (error) {
-      console.error("Failed to read the file:", error);
-      throw error;
+      const errorMsg = getErrorMessage(error);
+      console.log(`Error read a file path: "${targetPath}" : ${errorMsg}`);
+      throw errorMsg;
     }
   }
 
-  static async writeFile(targetPath: string, data: unknown): Promise<void> {
+  static async writeFile(targetPath: string, data: any) {
     if (!targetPath || targetPath.length === 0 || !data) return null;
 
     try {
-      await fsP.writeFile(targetPath, data, "utf8");
+      return await fsP.writeFile(targetPath, data, "utf8");
     } catch (error) {
-      console.error("Failed to write JSON file:", error);
-      throw error;
+      const errorMsg = getErrorMessage(error);
+      console.log(`Error write to a file path: "${targetPath}" : ${errorMsg}`);
+      throw errorMsg;
     }
   }
 
-  static async deleteFile(targetPath: string) {
+  static async deleteFile(targetPath: string): Promise<void> {
     if (!targetPath || targetPath.length === 0) return null;
 
     try {
-      await fsP.unlink(targetPath);
-      console.log(`File "${targetPath}" was successfully deleted`);
+      return await fsP.unlink(targetPath);
     } catch (error) {
-      console.log(`File "${targetPath}" doesn't exist`);
-      throw error;
+      const errorMsg = getErrorMessage(error);
+      console.log(`Error deleting file path: "${targetPath}" : ${errorMsg}`);
+      throw errorMsg;
     }
   }
 
-  static async deleteFolder(targetPath: string) {
+  static async deleteFolder(targetPath: string): Promise<void> {
     if (!targetPath || targetPath.length === 0) return null;
 
     try {
-      await fsP.rm(targetPath, { recursive: true, force: true });
-      console.log(`Folder "${targetPath}" (and contents) successfully deleted`);
+      return await fsP.rm(targetPath, { recursive: true, force: true });
     } catch (error) {
-      console.log(`Error deleting folder "${targetPath}": ${error.message}`);
-      throw error;
+      const errorMsg = getErrorMessage(error);
+      console.log(`Error deleting folder path: "${targetPath}" : ${errorMsg}`);
+      throw errorMsg;
     }
   }
 
@@ -75,7 +78,7 @@ export default class FsService {
         return false;
       }
 
-      throw error;
+      throw getErrorMessage(error);
     }
   }
 }

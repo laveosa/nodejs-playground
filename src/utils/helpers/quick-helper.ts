@@ -22,3 +22,12 @@ export function removeModelDuplicate<T extends Record<string, any>>(
 
   return Array.from(uniqueMap.values());
 }
+
+export function reassignIDs<T extends { id: string }>(collection: T[]): T[] {
+  if (!collection || collection.length === 0) return null;
+
+  return collection.map((user, index) => {
+    user.id = (index + 1).toString();
+    return user;
+  });
+}

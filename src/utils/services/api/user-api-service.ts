@@ -55,6 +55,9 @@ export default class UserApiService {
   }
 
   async createUser(data: UserModel) {
+    if (!data || typeof data !== "object") return null;
+
+    data.id = "stub";
     try {
       schemeValidation<UserModel>(UserScheme, data);
 
@@ -75,17 +78,11 @@ export default class UserApiService {
     }
   }
 
-  async updateUser(id: string, data: UserModel) {
-    if (!id || id.length === 0) return null;
-
+  async updateUser(data: UserModel) {
     try {
-      const validData: UserModel = schemeValidation<UserModel>(
-        UserScheme,
-        data,
-      );
+      schemeValidation<UserModel>(UserScheme, data);
 
       const targetUrl = new URL("user", DB_SERVER_ROOT);
-      targetUrl.searchParams.set("id", id);
 
       const response = await fetch(targetUrl.href, {
         method: ApiRequestType.PUT,

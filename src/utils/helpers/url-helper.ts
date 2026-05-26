@@ -30,7 +30,11 @@ export function getEntityChunk(
   return removeUrlParams(entityChunk) as EntityType;
 }
 
-export function getEntityUrl(path: string, withParams?: boolean): string {
+export function getEntityUrl(
+  path: string,
+  env: "api" | "db",
+  withParams?: boolean,
+): string {
   if (!path || path.length === 0) return null;
 
   const [urlWithoutParams, queryString] = path.split("?");
@@ -38,7 +42,7 @@ export function getEntityUrl(path: string, withParams?: boolean): string {
   if (!urlWithoutParams) return null;
 
   const pathChunks: string[] = urlWithoutParams.split("/");
-  const apiIndex = pathChunks.indexOf("api");
+  const apiIndex = pathChunks.indexOf(env);
 
   if (apiIndex === -1 || apiIndex === pathChunks.length - 1) return null;
 
@@ -49,7 +53,7 @@ export function getEntityUrl(path: string, withParams?: boolean): string {
     entityUrl += `?${queryString}`;
   }
 
-  return entityUrl;
+  return entityUrl || "/";
 }
 
 export function getUrlParams(request: IncomingMessage) {

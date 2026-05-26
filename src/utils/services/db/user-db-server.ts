@@ -5,7 +5,11 @@ import FsService from "#src/utils/services/fs-service.js";
 import { schemeValidation } from "#src/utils/validation/scheme-validation.js";
 import { UserScheme } from "#src/const/schemes/user-scheme.js";
 import type { UserModel } from "#src/const/models/user-model.js";
-import { removeModelDuplicate } from "#src/utils/helpers/quick-helper.js";
+import {
+  reassignIDs,
+  removeModelDuplicate,
+} from "#src/utils/helpers/quick-helper.js";
+import { atob } from "node:buffer";
 
 const DB_ROOT_PATH = "./db/jsons";
 const USERS_JSON_PATH = path.join(DB_ROOT_PATH, "users/data.json");
@@ -17,40 +21,52 @@ export default class UserDbServer {
     if (!id || id.length === 0) return null;
 
     try {
-      let response: UserModel = {
-        id: "1",
-        name: "Nik",
-        age: 43,
-        email: "leviosa@yahoo.com",
-      };
+      let response: UserModel;
+      let rawData: string;
 
-      const file = await fsP.open(USERS_JSON_PATH, "r");
+      try {
+        rawData = (await FsService.readFile(USERS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError?.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
+      }
 
-      console.log("FILE: ", file);
+      const users: UserModel[] = rawData ? JSON.parse(rawData) : [];
+      response = users.find((user) => user.id === id);
+
+      // TODO fix this error message, it's not the one which we receive in Postman
+      if (!response) throw new Error(`User with id: "${id}" not found`);
 
       return response;
-    } catch (fetchError) {
-      console.error("[API Server Internal Fetch Error]: ", fetchError);
-      throw fetchError;
+    } catch (error) {
+      console.error("[API Server Internal Fetch Error]: ", error);
+      throw error;
     }
   }
 
   async getAllUsers() {
-    /*try {
-      const targetUrl = new URL("user/all", DB_SERVER_ROOT);
+    try {
+      let responce: UserModel[];
+      let rawData: string;
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.GET,
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+      try {
+        rawData = (await FsService.readFile(USERS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError?.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
       }
 
-      return (await response.json()) as UserModel[];
-    } catch (fetchError) {
-      throw fetchError;
-    }*/
+      responce = rawData ? (JSON.parse(rawData) as UserModel[]) : [];
+      return responce;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async createUser(data: UserModel) {
@@ -70,86 +86,130 @@ export default class UserDbServer {
         }
       }
 
-      const users: UserModel[] = rawData ? JSON.parse(rawData) : [];
+      const users: UserModel[] = JSON.parse(rawData);
       users.push(newUser);
       const cleanUsers = removeModelDuplicate<UserModel>(users, ["id"]);
-      cleanUsers.forEach((user, index) => {
-        user.id = (index + 1).toString(); // Makes IDs nice, clean, and 1-indexed (e.g., "1", "2")
-      });
 
-      await FsService.writeFile<UserModel>(
+      await FsService.writeFile(
         USERS_JSON_PATH,
-        JSON.stringify(cleanUsers, null, 2),
+        JSON.stringify(reassignIDs<UserModel>(cleanUsers), null, 2),
       );
       return data;
-    } catch (fetchError) {
-      throw fetchError;
+    } catch (error) {
+      throw error;
     }
   }
 
-  async updateUser(id: string, data: UserModel) {
-    /*if (!id || id.length === 0) return null;
-
+  async updateUser(data: UserModel) {
     try {
-      const validData: UserModel = schemeValidation<UserModel>(
-        UserScheme,
-        data,
-      );
+      schemeValidation<UserModel>(UserScheme, data);
 
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
-      targetUrl.searchParams.set("id", id);
+      const tmpUser: UserModel = structuredClone(data);
+      let rawData: string;
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.PUT,
-        body: JSON.stringify(data),
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+      try {
+        rawData = (await FsService.readFile(USERS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
       }
 
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
-    }*/
+      let wasUpdate: boolean;
+      const users: UserModel[] = JSON.parse(rawData);
+      const updatedUsers: UserModel[] = users.map((user) => {
+        if (user.id === tmpUser.id) {
+          wasUpdate = true;
+          return tmpUser;
+        } else {
+          return user;
+        }
+      });
+
+      if (!wasUpdate) {
+        throw new Error(`User with id "${tmpUser.id}" was not found`);
+      } else {
+        await FsService.writeFile(
+          USERS_JSON_PATH,
+          JSON.stringify(reassignIDs<UserModel>(updatedUsers), null, 2),
+        );
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async deleteUser(id: string) {
-    /*if (!id || id.length === 0) return null;
+    if (!id || id.length === 0) return null;
 
     try {
-      const targetUrl = new URL("user", DB_SERVER_ROOT);
-      targetUrl.searchParams.set("id", id);
+      let rawData: string;
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.DELETE,
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+      try {
+        rawData = (await FsService.readFile(USERS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
       }
 
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
-    }*/
+      let deleteUser: UserModel;
+      const users: UserModel[] = JSON.parse(rawData);
+      let updatedUsers: UserModel[] = [];
+      users.map((user) => {
+        if (user.id === id) {
+          deleteUser = user;
+        } else {
+          updatedUsers.push(user);
+        }
+      });
+
+      if (!deleteUser) {
+        throw new Error(`User with id '${id}' was not found`);
+      } else {
+        await FsService.writeFile(
+          USERS_JSON_PATH,
+          JSON.stringify(reassignIDs<UserModel>(updatedUsers), null, 2),
+        );
+      }
+
+      return deleteUser;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async deleteAllUsers() {
-    /*try {
-      const targetUrl = new URL("user/all", DB_SERVER_ROOT);
+    try {
+      let rawData: string;
 
-      const response = await fetch(targetUrl.href, {
-        method: ApiRequestType.DELETE,
-      });
-
-      if (!response) {
-        throw new Error(`DB Server responded with status: ${response.status}`);
+      try {
+        rawData = await FsService.readFile(USERS_JSON_PATH);
+      } catch (readError: any) {
+        if (readError.code === "ENOENT") {
+          rawData = "[]";
+        } else {
+          throw readError;
+        }
       }
 
-      return (await response.json()) as UserModel;
-    } catch (fetchError) {
-      throw fetchError;
-    }*/
+      const users: UserModel[] = JSON.parse(rawData) as UserModel[];
+
+      if (!users || users.length === 0) {
+        throw new Error("The is no users to delete");
+      } else {
+        await FsService.writeFile(USERS_JSON_PATH, JSON.stringify([], null, 2));
+      }
+
+      return users;
+    } catch (error) {
+      throw error;
+    }
   }
 }

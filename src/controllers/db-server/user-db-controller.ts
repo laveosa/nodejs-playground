@@ -50,14 +50,14 @@ export default class UserDbController {
     [`${ApiRequestType.POST}:/single`]: (ctx) =>
       this.entityService.createUser(ctx.body),
     [`${ApiRequestType.PUT}:/single`]: (ctx) =>
-      this.entityService.updateUser(ctx.entityId.id, ctx.body),
+      this.entityService.updateUser(ctx.body),
     [`${ApiRequestType.DELETE}:/single`]: (ctx) =>
       this.entityService.deleteUser(ctx.entityId.id),
   };
 
   private static async apiServiceHandler(req: IncomingMessage): Promise<any> {
     const rType = req.method as ApiRequestType;
-    const eUrl = getEntityUrl(req.url) || "/";
+    const eUrl = getEntityUrl(req.url, "db");
     const routeModifier = eUrl.endsWith("/all") ? "/all" : "/single";
     const lookupKey = `${rType}:${routeModifier}`;
     const action = this.routeMap[lookupKey];

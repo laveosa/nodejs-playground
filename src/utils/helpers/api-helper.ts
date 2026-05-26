@@ -39,3 +39,13 @@ export function responseErrorHandler(
     res.end(JSON.stringify({ error: errorMessage }));
   }
 }
+
+export function getErrorMessage(error: unknown, noDefaultMessage?: boolean) {
+  if (error instanceof Error && (error as any).isValidationError) {
+    return error.message;
+  } else if (typeof error === "string" && error && error.length > 0) {
+    return error as string;
+  } else {
+    return !noDefaultMessage ? "no error message!" : null;
+  }
+}
