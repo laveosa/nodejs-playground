@@ -1,9 +1,10 @@
-import * as http from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { ENV_CONFIG } from "#src/config/env-config.js";
-import LogController from "#src/controllers/log-server/log-controller.js";
+import * as http from "node:http";
 import type { Socket } from "node:net";
 import { createHash } from "node:crypto";
+
+import { ENV_CONFIG } from "#src/config/env-config.js";
+import LogController from "#src/controllers/log-server/log-controller.js";
 import { parseRawWsFrame } from "#src/utils/helpers/api-helper.js";
 
 const serverConfiguration = {};

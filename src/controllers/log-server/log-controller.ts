@@ -1,11 +1,12 @@
+import { fileURLToPath } from "node:url";
+
 import type { ILogModel } from "#src/const/models/log-model.js";
 import FsService from "#src/utils/services/fs-service.js";
 import { reassignIDs } from "#src/utils/helpers/quick-helper.js";
 
-const LOGS_JSON_PATH = new URL(
-  "../../../db/jsons/logs/log-list.json",
-  import.meta.url,
-).pathname;
+const LOGS_JSON_PATH = fileURLToPath(
+  new URL("../../../db/jsons/logs/log-list.json", import.meta.url),
+);
 
 export default class LogController {
   static async handleIncomingLog(rawMessage: string) {

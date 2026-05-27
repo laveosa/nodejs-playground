@@ -9,12 +9,9 @@ import ProductController from "#src/controllers/api-server/product-controller.js
 import AddressController from "#src/controllers/api-server/address-controller.js";
 import BundleController from "#src/controllers/api-server/bundle-controller.js";
 import { responseErrorHandler } from "#src/utils/helpers/api-helper.js";
-import LogApiService from "#src/utils/services/logs/log-api-service.js";
 
 export default class ApiService {
-  constructor() {
-    LogApiService.connect();
-  }
+  constructor() {}
 
   static async mapEntityControllers(req: IncomingMessage, res: ServerResponse) {
     const entity: EntityType = getEntityChunk(req.url, "api");

@@ -37,6 +37,7 @@ export default class LogApiService {
     req.on("upgrade", (res, socket) => {
       this.socket = socket;
       this.isConnecting = false;
+
       console.log(
         "[LOG-CLIENT]: Connected to Log Server successfully over native WS line!",
       );
