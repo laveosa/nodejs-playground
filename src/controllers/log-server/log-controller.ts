@@ -47,4 +47,28 @@ export default class LogController {
       console.error("[Log Controller Frame Worker Crash]:", rootError.message);
     }
   }
+
+  static async dumpDatabase() {
+    try {
+      await FsService.writeFile(LOGS_JSON_PATH, JSON.stringify([], null, 2));
+      console.log("[LOG-SERVER]: Database successfully cleared back to [].");
+    } catch (error: any) {
+      console.error("[Log Controller Dump Error]:", error.message);
+    }
+  }
+
+  static async getAllLogs(): Promise<ILogModel[]> {
+    try {
+      let rawData = "[]";
+      try {
+        rawData = (await FsService.readFile(LOGS_JSON_PATH)) as string;
+      } catch (readError: any) {
+        if (readError.code !== "ENOENT") throw readError;
+      }
+      return rawData ? JSON.parse(rawData) : [];
+    } catch (error: any) {
+      console.error("[Log Controller Get All Error]:", error.message);
+      return [];
+    }
+  }
 }

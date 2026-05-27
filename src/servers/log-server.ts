@@ -14,10 +14,10 @@ export function runLogServer() {
     },
   });
 
-  httpServer.on("request", (req: IncomingMessage, res: ServerResponse) => {
+  /*httpServer.on("request", (req: IncomingMessage, res: ServerResponse) => {
     res.writeHead(426, { "Content-Type": "text/plain" });
     res.end("This is a dedicated Socket.io Log Server.");
-  });
+  });*/
 
   io.on("connection", (socket) => {
     console.log("[LOG-SERVER]: Persistent Socket.io connection established!");
@@ -25,6 +25,15 @@ export function runLogServer() {
     socket.on("log:record", async (payload: string) => {
       console.log(`[Log Server Event Received]: ${payload}`);
       await LogController.handleIncomingLog(payload);
+    });
+
+    socket.on("log:dump", async () => {
+      await LogController.dumpDatabase();
+    });
+
+    socket.on("log:get-all", async (callback: (logs: any[]) => void) => {
+      const currentLogs = await LogController.getAllLogs();
+      callback(currentLogs);
     });
 
     socket.on("disconnect", () => {

@@ -44,4 +44,19 @@ export default class LogApiService {
 
     this.socket.emit("log:record", payload);
   }
+
+  static dumpLogs() {
+    if (!this.socket) this.connect();
+    this.socket!.emit("log:dump");
+  }
+
+  static getAllLogs(): Promise<any[]> {
+    if (!this.socket) this.connect();
+
+    return new Promise((resolve) => {
+      this.socket!.emit("log:get-all", (response: any[]) => {
+        resolve(response);
+      });
+    });
+  }
 }
