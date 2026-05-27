@@ -4,6 +4,7 @@ import { IncomingMessage, ServerResponse } from "node:http";
 import { ENV_CONFIG } from "#src/config/env-config.js";
 import ApiServiceRouting from "#src/routing/api-server-routing.js";
 import LogApiService from "#src/utils/services/logs/log-api-service.js";
+import LogApiService_OLD from "#src/utils/services/logs/log-api-service_OLD.js";
 
 const serverConfig = {
   highWaterMark: 32 * 1024,
@@ -20,5 +21,6 @@ export function runApiServer() {
   server.listen(ENV_CONFIG.API_PORT, () => {
     console.log(`[API-SERVER] running on port: ${ENV_CONFIG.API_PORT}`);
     LogApiService.connect();
+    // LogApiService_OLD.connect();
   });
 }

@@ -2,9 +2,10 @@ import type { UserModel } from "#src/const/models/user-model.js";
 import { ApiRequestType } from "#src/const/enums/api-request-type.js";
 import { schemeValidation } from "#src/utils/validation/scheme-validation.js";
 import { UserScheme } from "#src/const/schemes/user-scheme.js";
+import { ENV_CONFIG } from "#src/config/env-config.js";
 import LogApiService from "#src/utils/services/logs/log-api-service.js";
 
-const DB_SERVER_ROOT = "http://localhost:8000/db/";
+const DB_SERVER_ROOT = `http://localhost:${ENV_CONFIG.DB_PORT}/db/`;
 
 export default class UserApiService {
   constructor() {}
@@ -57,6 +58,7 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      // or use LogApiService_OLD version
       LogApiService.sendLog(
         "ERROR",
         "UserApiService",
