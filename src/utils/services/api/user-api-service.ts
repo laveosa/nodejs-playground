@@ -21,6 +21,12 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog(
+        "ERROR",
+        "UserApiService",
+        `Failed to get users ID: ${id}`,
+      );
+
       if (response.status === 404) {
         throw new Error(`User with id "${id}" does not exist in the database.`);
       }
@@ -28,6 +34,11 @@ export default class UserApiService {
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
+    LogApiService.sendLog(
+      "INFO",
+      "UserApiService",
+      `Successfully get user data`,
+    );
     return (await response.json()) as UserModel;
   }
 
@@ -39,9 +50,19 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog(
+        "ERROR",
+        "UserApiService",
+        `Failed to get all users`,
+      );
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
+    LogApiService.sendLog(
+      "INFO",
+      "UserApiService",
+      `Successfully get all users data`,
+    );
     return (await response.json()) as UserModel[];
   }
 
@@ -59,11 +80,7 @@ export default class UserApiService {
 
     if (!response.ok) {
       // or use LogApiService_OLD version
-      LogApiService.sendLog(
-        "ERROR",
-        "UserApiService",
-        `Failed to create user schema entries.`,
-      );
+      LogApiService.sendLog("ERROR", "UserApiService", `Failed to create user`);
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
@@ -72,9 +89,8 @@ export default class UserApiService {
     LogApiService.sendLog(
       "INFO",
       "UserApiService",
-      `Successfully created dynamic profile entry for User ID: "${completeUser.id}"`,
+      `Successfully created new user`,
     );
-
     return completeUser as UserModel;
   }
 
@@ -88,9 +104,19 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog(
+        "ERROR",
+        "UserApiService",
+        `Failed to updated user`,
+      );
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
+    LogApiService.sendLog(
+      "INFO",
+      "UserApiService",
+      `Successfully update user data`,
+    );
     return (await response.json()) as UserModel;
   }
 
@@ -105,6 +131,8 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog("ERROR", "UserApiService", `Failed to delete user`);
+
       if (response.status === 404) {
         throw new Error(`User with id "${id}" does not exist in the database.`);
       }
@@ -112,6 +140,7 @@ export default class UserApiService {
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
+    LogApiService.sendLog("INFO", "UserApiService", `Successfully delete user`);
     return (await response.json()) as UserModel;
   }
 
@@ -123,9 +152,19 @@ export default class UserApiService {
     });
 
     if (!response.ok) {
+      LogApiService.sendLog(
+        "ERROR",
+        "UserApiService",
+        `Failed to delete all users`,
+      );
       throw new Error(`DB Server responded with status: ${response.status}`);
     }
 
+    LogApiService.sendLog(
+      "INFO",
+      "UserApiService",
+      `Successfully delete all users`,
+    );
     return (await response.json()) as UserModel;
   }
 }

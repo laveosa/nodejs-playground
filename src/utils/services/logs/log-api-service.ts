@@ -30,17 +30,21 @@ export default class LogApiService {
   }
 
   static sendLog(level: ILogModel["level"], context: string, message: string) {
-    if (!this.socket || this.socket.connected) {
+    if (!this.socket || !this.socket.connected) {
       this.connect();
       return;
     }
 
-    const payload = JSON.stringify({
+    const payload = {
       timestamp: new Date().toISOString(),
       level,
       context,
       message,
-    });
+    };
+
+    console.log(
+      `[LOG-CLIENT] Attempting to emit to server. Socket connected state: ${this.socket?.connected}`,
+    );
 
     this.socket.emit("log:record", payload);
   }

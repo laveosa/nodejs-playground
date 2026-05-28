@@ -6,6 +6,7 @@ import { createHash } from "node:crypto";
 import { ENV_CONFIG } from "#src/config/env-config.js";
 import LogController from "#src/controllers/log-server/log-controller.js";
 import { parseRawWsFrame } from "#src/utils/helpers/api-helper.js";
+import type { ILogModel } from "#src/const/models/log-model.js";
 
 const serverConfiguration = {};
 
@@ -52,9 +53,7 @@ export function runLogServiceOLD() {
 
         if (!message) return;
 
-        console.log(`[Log Server Event Received]: ${message}`);
-
-        await LogController.handleIncomingLog(message);
+        await LogController.handleIncomingLog(JSON.parse(message) as ILogModel);
       } catch (err: any) {
         console.error("[Log Server Frame Processing Error]:", err.message);
       }

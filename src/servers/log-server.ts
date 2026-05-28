@@ -22,8 +22,8 @@ export function runLogServer() {
   io.on("connection", (socket) => {
     console.log("[LOG-SERVER]: Persistent Socket.io connection established!");
 
-    socket.on("log:record", async (payload: string) => {
-      console.log(`[Log Server Event Received]: ${payload}`);
+    socket.on("log:record", async (payload: any) => {
+      console.log("[LOG-SERVER] Received raw data payload:", payload);
       await LogController.handleIncomingLog(payload);
     });
 

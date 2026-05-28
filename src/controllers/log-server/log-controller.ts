@@ -9,9 +9,8 @@ const LOGS_JSON_PATH = fileURLToPath(
 );
 
 export default class LogController {
-  static async handleIncomingLog(rawMessage: string) {
+  static async handleIncomingLog(logPayload: Omit<ILogModel, "id">) {
     try {
-      const logPayload: Omit<ILogModel, "id"> = JSON.parse(rawMessage);
       let rawData = "[]";
 
       try {

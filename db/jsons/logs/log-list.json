@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "id": "1",
+    "timestamp": "2026-05-28T13:16:09.265Z",
+    "level": "ERROR",
+    "context": "UserApiService",
+    "message": "Failed to get users ID: 23"
+  },
+  {
+    "id": "2",
+    "timestamp": "2026-05-28T13:16:16.807Z",
+    "level": "ERROR",
+    "context": "UserApiService",
+    "message": "Failed to get users ID: 1"
+  },
+  {
+    "id": "3",
+    "timestamp": "2026-05-28T13:16:33.582Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully get all users data"
+  },
+  {
+    "id": "4",
+    "timestamp": "2026-05-28T13:20:47.106Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully created new user"
+  },
+  {
+    "id": "5",
+    "timestamp": "2026-05-28T13:21:00.735Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully update user data"
+  },
+  {
+    "id": "6",
+    "timestamp": "2026-05-28T13:21:13.314Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully delete user"
+  },
+  {
+    "id": "7",
+    "timestamp": "2026-05-28T13:21:20.298Z",
+    "level": "ERROR",
+    "context": "UserApiService",
+    "message": "Failed to delete user"
+  },
+  {
+    "id": "8",
+    "timestamp": "2026-05-28T13:21:26.764Z",
+    "level": "ERROR",
+    "context": "UserApiService",
+    "message": "Failed to updated user"
+  },
+  {
+    "id": "9",
+    "timestamp": "2026-05-28T13:21:40.065Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully created new user"
+  },
+  {
+    "id": "10",
+    "timestamp": "2026-05-28T13:21:44.660Z",
+    "level": "INFO",
+    "context": "UserApiService",
+    "message": "Successfully delete all users"
+  }
+]
